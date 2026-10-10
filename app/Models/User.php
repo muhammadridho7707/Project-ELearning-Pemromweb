@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -19,8 +20,14 @@ class User extends Authenticatable
     {
         return [
             'email_verified_at' => 'datetime',
-            'password' => 'hashed', // otomatis di-hash saat disimpan
+            'password' => 'hashed',
         ];
+    }
+
+    // URL foto profil (null jika belum punya foto). Dipakai: $user->foto_url
+    protected function fotoUrl(): Attribute
+    {
+        return Attribute::get(fn () => $this->foto ? asset('storage/' . $this->foto) : null);
     }
 
     public function isGuru(): bool
@@ -33,13 +40,11 @@ class User extends Authenticatable
         return $this->role === 'siswa';
     }
 
-    // Guru: kelas yang dia buat/ajar
     public function taughtCourses(): HasMany
     {
         return $this->hasMany(Course::class, 'teacher_id');
     }
 
-    // Siswa: kelas yang dia ambil
     public function enrolledCourses(): BelongsToMany
     {
         return $this->belongsToMany(Course::class, 'enrollments', 'student_id', 'course_id')

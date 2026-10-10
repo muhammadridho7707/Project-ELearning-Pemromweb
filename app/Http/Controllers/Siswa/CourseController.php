@@ -30,22 +30,28 @@ class CourseController extends Controller
     }
 
     public function show(Course $course)
-    {
-        $course->load('teacher')->loadCount('students');
+{
+    $course->load('teacher')->loadCount('students');
 
-        $isEnrolled = auth()->user()
-            ->enrolledCourses()
-            ->where('courses.id', $course->id)
-            ->exists();
+    $isEnrolled = auth()->user()
+        ->enrolledCourses()
+        ->where('courses.id', $course->id)
+        ->exists();
 
-        // Materi hanya dimuat kalau siswa sudah terdaftar
-        $materials = $isEnrolled
-            ? $course->materials()->latest()->get()
-            : collect();
+    $materials = $isEnrolled
+        ? $course->materials()->latest()->get()
+        : collect();
 
-        return view('siswa.courses.show', compact('course', 'isEnrolled', 'materials'));
-    }
+    // Tugas beserta pengumpulan milik siswa ini saja
+    $assignments = $isEnrolled
+        ? $course->assignments()
+            ->with(['submissions' => fn ($q) => $q->where('student_id', auth()->id())])
+            ->orderBy('deadline')
+            ->get()
+        : collect();
 
+    return view('siswa.courses.show', compact('course', 'isEnrolled', 'materials', 'assignments'));
+}
     public function enroll(Course $course)
     {
         auth()->user()->enrolledCourses()->syncWithoutDetaching([$course->id]);

@@ -3,47 +3,38 @@
 @section('title', 'Dashboard Guru')
 
 @section('content')
-<div class="row g-4">
-    {{-- Profil --}}
-    <div class="col-md-4">
-        <div class="card shadow-sm">
-            <div class="card-body text-center p-4">
-                <div class="rounded-circle bg-success text-white d-inline-flex align-items-center justify-content-center mb-3"
-                     style="width:80px;height:80px;font-size:2rem;">
-                    {{ strtoupper(substr(auth()->user()->name, 0, 1)) }}
-                </div>
-                <h5 class="mb-0">{{ auth()->user()->name }}</h5>
-                <small class="text-muted">{{ auth()->user()->email }}</small>
-                <div class="mt-2"><span class="badge bg-success">Guru</span></div>
-                <p class="mt-3 mb-0 text-muted small">
-                    {{ auth()->user()->bio ?: 'Belum ada bio.' }}
-                </p>
-            </div>
-        </div>
+<div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-4">
+    <div>
+        <h3 class="mb-0">Kelas yang Saya Ajar</h3>
+        <small class="text-muted">{{ $courses->count() }} kelas</small>
     </div>
+    <a href="{{ route('guru.courses.create') }}" class="btn btn-primary">
+        <i class="bi bi-plus-lg me-1"></i> Tambah Kelas
+    </a>
+</div>
 
-    {{-- Kelas yang diajar --}}
-    <div class="col-md-8">
-        <div class="d-flex justify-content-between align-items-center mb-3">
-            <h4 class="mb-0">Kelas yang Saya Ajar ({{ $courses->count() }})</h4>
-            <a href="{{ route('guru.courses.create') }}" class="btn btn-primary">+ Tambah Kelas</a>
-        </div>
-
-        @forelse ($courses as $course)
-            <div class="card shadow-sm mb-3">
-                <div class="card-body d-flex justify-content-between align-items-center">
-                    <div>
-                        <h5 class="mb-1">{{ $course->judul }}</h5>
-                        <small class="text-muted">{{ $course->students_count }} siswa terdaftar</small>
-                    </div>
-                    <a href="{{ route('guru.courses.show', $course) }}" class="btn btn-outline-primary btn-sm">Buka</a>
+<div class="row g-3">
+    @forelse ($courses as $course)
+        <div class="col-md-6 col-xl-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-body d-flex flex-column">
+                    <h5>{{ $course->judul }}</h5>
+                    <small class="text-muted mb-2">
+                        <i class="bi bi-people-fill"></i> {{ $course->students_count }} siswa terdaftar
+                    </small>
+                    <p class="small text-muted flex-grow-1">
+                        {{ \Illuminate\Support\Str::limit($course->deskripsi, 90) ?: 'Tanpa deskripsi.' }}
+                    </p>
+                    <a href="{{ route('guru.courses.show', $course) }}" class="btn btn-outline-primary btn-sm">Kelola Kelas</a>
                 </div>
             </div>
-        @empty
-            <div class="alert alert-info">
-                Kamu belum punya kelas. Klik <strong>+ Tambah Kelas</strong> untuk membuat yang pertama.
+        </div>
+    @empty
+        <div class="col-12">
+            <div class="alert alert-info mb-0">
+                Kamu belum punya kelas. Klik <strong>Tambah Kelas</strong> untuk membuat yang pertama.
             </div>
-        @endforelse
-    </div>
+        </div>
+    @endforelse
 </div>
 @endsection

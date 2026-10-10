@@ -38,7 +38,7 @@
     </div>
     <div class="col-md-4">
         <div class="card text-center shadow-sm"><div class="card-body">
-            <div class="fs-3">{{ $course->assignments_count }}</div><small class="text-muted">Tugas</small>
+            <div class="fs-3">{{ $course->assignments->count() }}</div><small class="text-muted">Tugas</small>
         </div></div>
     </div>
 </div>
@@ -104,6 +104,67 @@
                     </tr>
                 @empty
                     <tr><td colspan="4" class="text-center text-muted py-4">Belum ada materi.</td></tr>
+                @endforelse
+            </tbody>
+        </table>
+    </div>
+</div>
+
+{{-- ===== Tugas ===== --}}
+<div class="card shadow-sm mb-4">
+    <div class="card-header bg-white"><strong>Tugas</strong></div>
+    <div class="card-body">
+        <form action="{{ route('guru.assignments.store', $course) }}" method="POST">
+            @csrf
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label class="form-label">Judul Tugas</label>
+                    <input type="text" name="judul" value="{{ old('judul') }}"
+                           class="form-control @error('judul') is-invalid @enderror" required>
+                    @error('judul') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Deadline</label>
+                    <input type="datetime-local" name="deadline" value="{{ old('deadline') }}"
+                           class="form-control @error('deadline') is-invalid @enderror" required>
+                    @error('deadline') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                </div>
+                <div class="col-12">
+                    <label class="form-label">Deskripsi / Instruksi</label>
+                    <textarea name="deskripsi" rows="3"
+                              class="form-control @error('deskripsi') is-invalid @enderror">{{ old('deskripsi') }}</textarea>
+                    @error('deskripsi') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                </div>
+                <div class="col-12">
+                    <button class="btn btn-primary">Buat Tugas</button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <div class="table-responsive">
+        <table class="table align-middle mb-0">
+            <thead class="table-light">
+                <tr><th>Judul</th><th>Deadline</th><th class="text-center">Terkumpul</th><th class="text-end">Aksi</th></tr>
+            </thead>
+            <tbody>
+                @forelse ($course->assignments as $assignment)
+                    <tr>
+                        <td>{{ $assignment->judul }}</td>
+                        <td>
+                            {{ $assignment->deadline->format('d M Y, H:i') }}
+                            @if ($assignment->isClosed())
+                                <span class="badge bg-danger">Ditutup</span>
+                            @endif
+                        </td>
+                        <td class="text-center">{{ $assignment->submissions_count }} / {{ $course->students->count() }}</td>
+                        <td class="text-end">
+                            <a href="{{ route('guru.assignments.show', [$course, $assignment]) }}"
+                               class="btn btn-sm btn-outline-primary">Detail &amp; Nilai</a>
+                        </td>
+                    </tr>
+                @empty
+                    <tr><td colspan="4" class="text-center text-muted py-4">Belum ada tugas.</td></tr>
                 @endforelse
             </tbody>
         </table>

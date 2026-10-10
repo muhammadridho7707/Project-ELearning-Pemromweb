@@ -36,18 +36,17 @@ class CourseController extends Controller
     }
 
     public function show(Course $course)
-    {
-        $this->authorizeOwner($course);
+{
+    $this->authorizeOwner($course);
 
-        $course->load([
-            'students'  => fn ($q) => $q->orderBy('name'),
-            'materials' => fn ($q) => $q->latest(),
-        ]);
-        $course->loadCount('assignments');
+    $course->load([
+        'students'    => fn ($q) => $q->orderBy('name'),
+        'materials'   => fn ($q) => $q->latest(),
+        'assignments' => fn ($q) => $q->withCount('submissions')->orderBy('deadline'),
+    ]);
 
-        return view('guru.courses.show', compact('course'));
-    }
-
+    return view('guru.courses.show', compact('course'));
+}
     public function edit(Course $course)
     {
         $this->authorizeOwner($course);

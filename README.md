@@ -1,58 +1,237 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# PjBL E-Learning
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Aplikasi web e-learning berbasis **Project-Based Learning (PjBL)** dengan dua peran pengguna, yaitu guru dan siswa. Dibuat untuk memenuhi tugas mata kuliah Pemrograman Web.
 
-## About Laravel
+- **Nama Kelompok:** **Sandwich Goceng Satu**
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+- **Nama:** <br> 
+    Muhammad Ridho Reyhan <br>
+    Nayla Salsabila <br>
+    Rachel Aulia <br>
+    Nikita Anastasya
+- **NIM:** <br>
+    4252550013 <br>
+    4252550013 <br>
+    4252550005 <br>
+    4252550035
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+- **Mata Kuliah:** Pemrograman Web
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+- **Mata kuliah:** Pemrograman Web
+- **Dosen:** Bapak Adidtya Perdana , S.T., M.Kom
 
-## Learning Laravel
+---
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+## Fitur
 
-In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+### Umum
+- Registrasi dan login dengan pilihan peran **guru** atau **siswa**
+- Autentikasi berbasis **session** (disimpan di database) dan **cookie** (`laravel_session`, `XSRF-TOKEN`, dan `remember_web_*` untuk fitur "Ingat saya")
+- Pembatasan akses berdasarkan peran (middleware `role`)
+- Pesan sukses dan error (flash message)
+- Profil: ubah nama dan bio, unggah atau hapus foto, ganti password
+- Mode gelap dan terang (tersimpan di browser)
+- Tampilan responsif (Bootstrap 5)
 
-You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
+### Guru
+- Membuat, mengubah, dan menghapus kelas
+- Mengunggah, mengunduh, dan menghapus materi dari file internal
+- Membuat, mengubah, dan menghapus tugas beserta deadline
+- Melihat daftar siswa di setiap kelas
+- Mengunduh file pengumpulan siswa, lalu memberi nilai dan feedback
 
-## Agentic Development
+### Siswa
+- Dashboard berisi kelas yang diambil
+- Melihat daftar semua kelas (dengan pencarian dan pagination)
+- Mendaftar atau keluar dari kelas
+- Mengunduh materi dari kelas yang diikuti
+- Mengumpulkan tugas, mengumpulkan ulang selama belum dinilai, dan melihat nilai serta feedback
 
-Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
+### Keamanan
+- Password di-hash (bcrypt)
+- Proteksi CSRF pada semua form
+- Pendaftaran guru memerlukan **kode undangan**
+- Pembatasan percobaan login dan registrasi (5 kali per menit)
+- Session di-regenerate setelah login dan di-invalidate saat logout
+- File materi dan tugas disimpan di storage privat dan hanya bisa diunduh oleh pihak yang berhak
+- Guru hanya dapat mengelola kelas miliknya sendiri
+- Validasi tipe dan ukuran file upload
 
+---
+
+## Teknologi
+
+| Komponen | Versi / Keterangan |
+|---|---|
+| PHP | 8.2 atau lebih baru |
+| Laravel | 13 |
+| Database | MySQL |
+| Frontend | Blade, Bootstrap 5.3, Bootstrap Icons |
+| Web server lokal | Laragon (atau XAMPP) |
+
+---
+
+## Persyaratan
+
+- PHP 8.2+ (ekstensi: `pdo_mysql`, `mbstring`, `fileinfo`, `openssl`)
+- Composer
+- MySQL
+
+---
+
+## Cara Instalasi
+
+Jalankan perintah berikut di terminal dari folder project.
+
+**1. Pasang dependensi**
 ```bash
-composer require laravel/boost --dev
-
-php artisan boost:install
+composer install
 ```
 
-Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
+**2. Salin file environment**
+```bash
+copy .env.example .env
+```
+(Di Linux atau macOS: `cp .env.example .env`)
 
-## Contributing
+**3. Atur database di `.env`**
+```env
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=pjbl_elearning
+DB_USERNAME=root
+DB_PASSWORD=
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+SESSION_DRIVER=database
+APP_TIMEZONE=Asia/Jakarta
+TEACHER_INVITE_CODE=GURU-2026-XYZ
+```
 
-## Code of Conduct
+**4. Buat kunci aplikasi**
+```bash
+php artisan key:generate
+```
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+**5. Buat database kosong** bernama `pjbl_elearning` lewat phpMyAdmin (collation `utf8mb4_unicode_ci`).
 
-## Security Vulnerabilities
+**6. Buat tabel**
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+*Opsi A: lewat migration (disarankan)*
+```bash
+php artisan migrate
+```
 
-## License
+*Opsi B: import file SQL*
+Import `pjbl_elearning.sql` lewat phpMyAdmin (tab Import).
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+**7. Hubungkan folder storage** (diperlukan agar foto profil tampil)
+```bash
+php artisan storage:link
+```
+
+**8. Jalankan aplikasi**
+```bash
+php artisan serve
+```
+
+Buka **http://127.0.0.1:8000** di browser.
+
+---
+
+## Cara Penggunaan
+
+### Mendaftar sebagai siswa
+1. Buka halaman **Daftar**, lalu pilih **Siswa**.
+2. Isi nama, email, dan password, lalu klik **Daftar**.
+
+### Mendaftar sebagai guru
+1. Buka halaman **Daftar**, lalu pilih **Guru**.
+2. Isi data, lalu masukkan **Kode Undangan Guru**.
+3. Kode default ada di file `.env` pada variabel `TEACHER_INVITE_CODE`
+   (nilai bawaan: `GURU-2026-XYZ`).
+
+### Skenario pengujian singkat
+1. Daftar dan login sebagai **guru**, lalu buat sebuah kelas.
+2. Di halaman kelas, unggah materi dan buat tugas dengan deadline.
+3. Logout, lalu daftar dan login sebagai **siswa**.
+4. Buka **Daftar Kelas**, lalu daftar ke kelas yang tadi dibuat.
+5. Unduh materi, lalu kumpulkan file tugas.
+6. Login kembali sebagai guru, buka **Detail & Nilai**, lalu beri nilai dan feedback.
+7. Login sebagai siswa dan lihat nilai yang diberikan.
+
+---
+
+## Struktur Database
+
+| Tabel | Isi |
+|---|---|
+| `users` | Akun pengguna (nama, email, password, role, foto, bio) |
+| `courses` | Kelas yang dibuat guru |
+| `enrollments` | Relasi siswa dengan kelas (many-to-many) |
+| `materials` | Materi (file) per kelas |
+| `assignments` | Tugas per kelas beserta deadline |
+| `submissions` | Pengumpulan tugas siswa, nilai, dan feedback |
+| `sessions` | Data session login |
+
+Relasi utama:
+- Satu guru memiliki banyak kelas.
+- Siswa dan kelas terhubung lewat `enrollments`.
+- Satu kelas memiliki banyak materi dan tugas.
+- Satu tugas memiliki banyak pengumpulan (satu per siswa).
+
+---
+
+## Struktur Folder Penting
+
+```
+app/
+├── Http/
+│   ├── Controllers/
+│   │   ├── Auth/           (login, register)
+│   │   ├── Guru/           (kelas, materi, tugas, penilaian)
+│   │   ├── Siswa/          (dashboard, kelas, materi, tugas)
+│   │   └── ProfileController.php
+│   └── Middleware/RoleMiddleware.php
+└── Models/                 (User, Course, Material, Assignment, Submission)
+database/migrations/        (skema database)
+resources/views/            (tampilan Blade)
+routes/web.php              (daftar route)
+storage/app/private/        (file materi dan tugas)
+storage/app/public/foto/    (foto profil)
+```
+
+---
+
+## Batasan Upload
+
+- Materi dan tugas: maksimal **10 MB**, format pdf, doc, docx, ppt, pptx, xls, xlsx, zip, txt, jpg, jpeg, png
+- Foto profil: maksimal **2 MB**, format jpg, jpeg, png, webp
+
+Jika upload gagal pada file yang kecil, naikkan batas PHP di `php.ini`:
+```ini
+upload_max_filesize = 20M
+post_max_size = 25M
+```
+
+---
+
+## Pemecahan Masalah
+
+| Masalah | Solusi |
+|---|---|
+| `No connection could be made` | Nyalakan MySQL (di Laragon klik **Start All**) |
+| `Unknown database` | Buat database `pjbl_elearning` dan cocokkan `DB_DATABASE` di `.env` |
+| `No application encryption key` | Jalankan `php artisan key:generate` |
+| Foto profil tidak tampil | Jalankan `php artisan storage:link` |
+| Perubahan tidak muncul | Jalankan `php artisan optimize:clear` |
+| Kode undangan guru selalu ditolak | Pastikan `TEACHER_INVITE_CODE` terisi di `.env`, lalu `php artisan config:clear` |
+| Halaman 429 | Terlalu banyak percobaan login, tunggu satu menit |
+
+---
+
+## Keterbatasan dan Rencana Pengembangan
+
+- Kode undangan guru bersifat bersama, sehingga bisa bocor. Pengembangan berikutnya: persetujuan akun guru oleh admin.
+- Belum ada verifikasi email dan fitur lupa password.
+- Belum ada pengumuman kelas, diskusi, kelompok proyek, dan rekap nilai.

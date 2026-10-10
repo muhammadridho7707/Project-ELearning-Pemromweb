@@ -37,6 +37,7 @@
 
 @if ($isEnrolled)
     <div class="row g-3">
+        {{-- Materi --}}
         <div class="col-md-6">
             <div class="card shadow-sm h-100">
                 <div class="card-header bg-white"><strong>Materi ({{ $materials->count() }})</strong></div>
@@ -60,10 +61,35 @@
                 </ul>
             </div>
         </div>
+
+        {{-- Tugas --}}
         <div class="col-md-6">
             <div class="card shadow-sm h-100">
-                <div class="card-header bg-white"><strong>Tugas</strong></div>
-                <div class="card-body text-muted">Daftar tugas dan pengumpulan akan tampil di sini (Fase 5B).</div>
+                <div class="card-header bg-white"><strong>Tugas ({{ $assignments->count() }})</strong></div>
+                <ul class="list-group list-group-flush">
+                    @forelse ($assignments as $assignment)
+                        @php $sub = $assignment->submissions->first(); @endphp
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <div>
+                                {{ $assignment->judul }}
+                                @if ($sub && $sub->isGraded())
+                                    <span class="badge bg-success">Nilai: {{ $sub->nilai }}</span>
+                                @elseif ($sub)
+                                    <span class="badge bg-info text-dark">Terkumpul</span>
+                                @elseif ($assignment->isClosed())
+                                    <span class="badge bg-danger">Ditutup</span>
+                                @else
+                                    <span class="badge bg-warning text-dark">Belum dikumpulkan</span>
+                                @endif
+                                <div class="small text-muted">Deadline: {{ $assignment->deadline->format('d M Y, H:i') }}</div>
+                            </div>
+                            <a href="{{ route('siswa.assignments.show', [$course, $assignment]) }}"
+                               class="btn btn-sm btn-outline-primary">Buka</a>
+                        </li>
+                    @empty
+                        <li class="list-group-item text-muted">Belum ada tugas.</li>
+                    @endforelse
+                </ul>
             </div>
         </div>
     </div>

@@ -66,6 +66,7 @@ return [
     */
 
     'timezone' => 'UTC',
+        'teacher_invite_code' => env('TEACHER_INVITE_CODE'),
 
     /*
     |--------------------------------------------------------------------------
